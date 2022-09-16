@@ -49,9 +49,7 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Указан некорректный id'));
-      } else next(err);
+      next(err);
     });
 };
 
@@ -63,7 +61,9 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new RegisterError('Пользователь с данным e-mail уже зарегестрирован.'));
+      } else if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
       } else next(err);
     });
