@@ -4,7 +4,7 @@ const AccesError = require('../errors/acces-err');
 const ValidationError = require('../errors/validation-err');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch((err) => next(err));
 };
